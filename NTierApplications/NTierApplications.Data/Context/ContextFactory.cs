@@ -12,8 +12,7 @@ namespace NTierApplications.Data.Context
 	{
 		public NTierApplicationsDataContext Create()
 		{
-		    var connectionString = ConfigurationManager.ConnectionStrings["NTierApplicationsDataContext"].ToString();
-            return new NTierApplicationsDataContext(connectionString);
+            return new NTierApplicationsDataContext(ConfigurationManager.ConnectionStrings["NTierApplicationsDataContext"].ToString());
 		}
 	}
 }

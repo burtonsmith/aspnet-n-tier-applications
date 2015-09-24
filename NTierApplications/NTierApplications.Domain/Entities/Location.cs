@@ -1,4 +1,6 @@
-﻿namespace NTierApplications.Domain.Entities
+﻿using System.Collections.Generic;
+
+namespace NTierApplications.Domain.Entities
 {
     public class Location : BaseEntity
     {
@@ -8,5 +10,6 @@
         public string State { get; set; }
         public int Zip { get; set; }
 
+        public virtual ICollection<Employee> Employees { get; set; }
     }
 }

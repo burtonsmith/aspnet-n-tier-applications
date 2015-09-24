@@ -6,7 +6,7 @@ using System.Web.Mvc;
 
 namespace NTierApplications.MVC.Controllers
 {
-    public class EmployeeController : Controller
+    public class EmployeeController : BaseController
     {
         // GET: Employee
         public ActionResult Index()

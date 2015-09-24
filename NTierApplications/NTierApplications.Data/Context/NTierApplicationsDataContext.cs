@@ -17,6 +17,11 @@ namespace NTierApplications.Data.Context
 		public DbSet<Location> Locations { get; set; }
 		public DbSet<NamePrefix> NamePrefixes { get; set; }
 		public DbSet<Skill> Skills { get; set; }
+		public DbSet<User> Users { get; set; }
+		public DbSet<UserClaim> UserClaims { get; set; }
+		public DbSet<UserLogin> UserLogins { get; set; }
+		public DbSet<UserRole> UserRoles { get; set; }
+
 
 		public NTierApplicationsDataContext(string conntectionString) : base(conntectionString)
 		{

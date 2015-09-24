@@ -6,6 +6,6 @@ namespace NTierApplications.Domain.Entities
     {
         public string Name { get; set; }
 
-        public virtual ICollection<Employee> Contacts { get; set; }
+        public virtual ICollection<Employee> Employees { get; set; }
     }
 }

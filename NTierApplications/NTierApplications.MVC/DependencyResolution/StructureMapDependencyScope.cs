@@ -81,6 +81,16 @@ namespace NTierApplications.MVC.DependencyResolution {
             CurrentNestedContainer = Container.GetNestedContainer();
         }
 
+		// created to expose the CurrentNestedContainer to the StructureMapScopeModule
+
+	    public IContainer GetCurrentNestedContainer()
+	    {
+		    if(CurrentNestedContainer == null)
+				CreateNestedContainer();
+
+		    return CurrentNestedContainer;
+	    }
+
         public void Dispose() {
             DisposeNestedContainer();
             Container.Dispose();

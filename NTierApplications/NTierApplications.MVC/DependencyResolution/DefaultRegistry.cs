@@ -15,6 +15,11 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
+using System.Configuration;
+using NTierApplications.Data.Context;
+using NTierApplications.Data.Repositories;
+using NTierApplications.Domain.Repositories;
+
 namespace NTierApplications.MVC.DependencyResolution {
     using StructureMap.Configuration.DSL;
     using StructureMap.Graph;
@@ -26,9 +31,15 @@ namespace NTierApplications.MVC.DependencyResolution {
             Scan(
                 scan => {
                     scan.TheCallingAssembly();
+					scan.Assembly("NTierApplications.Domain");
+					scan.Assembly("NTierApplications.Data");
                     scan.WithDefaultConventions();
 					scan.With(new ControllerConvention());
                 });
+			For<NTierApplicationsDataContext>().Use(() => new NTierApplicationsDataContext(ConfigurationManager.ConnectionStrings["NTierApplicationsDataContext"].ToString()));
+			For(typeof(IRepository<>)).Use(typeof(EfRepository<>));
+
+
             //For<IExample>().Use<Example>();
         }
 
