@@ -12,6 +12,8 @@ namespace NTierApplications.Domain.ServiceInterfaces
 		IUserPhoneNumberStore<User, int>,
 		IUserTwoFactorStore<User, int>,
 		IUserLockoutStore<User,	int>,
+		IUserLoginStore<User, int>,
+		IUserClaimStore<User, int>,
 		IUserStore<User, int> // Kept so I know it was implemented.
 	{
 		Task<User> FindByLoginAsync(string userName, string password);

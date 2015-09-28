@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Security.Claims;
 using System.Threading.Tasks;
+using Microsoft.AspNet.Identity;
 using Microsoft.Win32.SafeHandles;
 using NTierApplications.Domain.Entities;
 using NTierApplications.Domain.Repositories;
@@ -13,6 +15,7 @@ namespace NTierApplications.Domain.Services
 	public class UserService : IUserService
 	{
 		private readonly IRepository<User> _userRepository;
+
 		bool _disposed;
 		readonly SafeHandle _handle = new SafeFileHandle(IntPtr.Zero, true);
 
@@ -34,13 +37,13 @@ namespace NTierApplications.Domain.Services
 
 			if (disposing)
 				_handle.Dispose();
-			
+
 			_disposed = true;
 		}
 
 		public Task CreateAsync(User user)
 		{
-			if(user == null)
+			if (user == null)
 				throw new ArgumentNullException("user");
 
 			_userRepository.Insert(user);
@@ -50,7 +53,7 @@ namespace NTierApplications.Domain.Services
 
 		public Task UpdateAsync(User user)
 		{
-			if(user == null)
+			if (user == null)
 				throw new ArgumentNullException("user");
 
 			_userRepository.Update(user);
@@ -65,7 +68,7 @@ namespace NTierApplications.Domain.Services
 
 		public Task<User> FindByIdAsync(int userId)
 		{
-			if(userId == 0)
+			if (userId == 0)
 				throw new ArgumentNullException("userId");
 
 			var result = _userRepository.GetById(userId);
@@ -78,7 +81,7 @@ namespace NTierApplications.Domain.Services
 
 		public Task<User> FindByNameAsync(string userName)
 		{
-			if(string.IsNullOrEmpty(userName))
+			if (string.IsNullOrEmpty(userName))
 				throw new ArgumentNullException("userName");
 
 			var result =
@@ -104,7 +107,7 @@ namespace NTierApplications.Domain.Services
 
 		public Task<string> GetPasswordHashAsync(User user)
 		{
-			if(user == null)
+			if (user == null)
 				throw new ArgumentNullException("user");
 
 			string passwordHash = _userRepository.GetById(user.Id).PasswordHash;
@@ -250,8 +253,8 @@ namespace NTierApplications.Domain.Services
 			if (user == null)
 				throw new ArgumentNullException("user");
 
-			return Task.FromResult(user.LockoutEndDateUtc.HasValue 
-				? new DateTimeOffset(DateTime.SpecifyKind(user.LockoutEndDateUtc.Value, DateTimeKind.Utc)) 
+			return Task.FromResult(user.LockoutEndDateUtc.HasValue
+				? new DateTimeOffset(DateTime.SpecifyKind(user.LockoutEndDateUtc.Value, DateTimeKind.Utc))
 				: new DateTimeOffset());
 
 		}
@@ -328,7 +331,7 @@ namespace NTierApplications.Domain.Services
 
 		public async Task<User> FindByProviderAsync(string loginProvider, string providerKey)
 		{
-			if(loginProvider == null)
+			if (loginProvider == null)
 				throw new ArgumentNullException("loginProvider");
 
 			return await Task.Run(() => _userRepository.Table.FirstOrDefault(
@@ -342,7 +345,112 @@ namespace NTierApplications.Domain.Services
 			if (loginProvider == null)
 				throw new ArgumentNullException("loginProvider");
 
-			return await Task.Run(() => _userRepository.Table.FirstOrDefault( x => x.UserName == loginProvider && x.PasswordHash == providerKey));
+			return await Task.Run(() => _userRepository.Table.FirstOrDefault(x => x.UserName == loginProvider && x.PasswordHash == providerKey));
+		}
+
+		public async Task AddLoginAsync(User user, UserLoginInfo login)
+		{
+			if (login == null)
+				throw new ArgumentNullException("login");
+
+			var loginToAdd = new UserLogin()
+			{
+				LoginProvider = login.LoginProvider,
+				ProviderKey = login.ProviderKey
+			};
+
+			user.UserLogins.Add(loginToAdd);
+
+			await Task.Run(() => _userRepository.Update(user));
+		}
+
+		public async Task<User> FindAsync(UserLoginInfo login)
+		{
+			if (login == null)
+				throw new ArgumentNullException("login");
+
+			var user = _userRepository.Table.FirstOrDefault(x =>
+			{
+				var userLogin = x.UserLogins.FirstOrDefault(y => y.LoginProvider == login.LoginProvider && y.ProviderKey == login.ProviderKey);
+				return userLogin != null && x.Id == userLogin.UserId;
+			});
+
+			return await Task.Run(() => user);
+		}
+
+		public async Task<IList<UserLoginInfo>> GetLoginsAsync(User user)
+		{
+			if (user == null)
+				throw new ArgumentNullException("user");
+
+			var logins = from l in user.UserLogins
+						 select new UserLoginInfo(l.LoginProvider, l.ProviderKey)
+						 {
+							 LoginProvider = l.LoginProvider,
+							 ProviderKey = l.ProviderKey
+						 };
+
+			return await Task.Run(() => logins.ToList());
+		}
+
+		public async Task RemoveLoginAsync(User user, UserLoginInfo login)
+		{
+			if (login == null)
+				throw new ArgumentNullException("login");
+
+			var loginToDelete =
+				user.UserLogins.FirstOrDefault(x => x.LoginProvider == login.LoginProvider && x.ProviderKey == login.ProviderKey);
+
+			if (loginToDelete == null)
+				return;
+
+			user.UserLogins.Remove(loginToDelete);
+
+			await Task.Run(() => _userRepository.Update(user));
+		}
+
+		public async Task<IList<Claim>> GetClaimsAsync(User user)
+		{
+			if (user == null)
+				throw new ArgumentNullException("user", "A valid user us required.");
+
+			var claims = from c in user.UserClaims
+						 select new Claim(c.ClaimType, c.ClaimValue);
+
+			return await Task.Run(() => claims.ToList());
+		}
+
+		public async Task AddClaimAsync(User user, Claim claim)
+		{
+			if (user == null)
+				throw new ArgumentNullException("user");
+
+			if (claim == null)
+				throw new NullReferenceException("claim");
+
+			var newClaim = new UserClaim() { ClaimType = claim.Type, ClaimValue = claim.Value, UserId = user.Id };
+
+			user.UserClaims.Add(newClaim);
+
+			await Task.Run(() => _userRepository.Update(user));
+		}
+
+		public async Task RemoveClaimAsync(User user, Claim claim)
+		{
+			if (user == null)
+				throw new ArgumentNullException("user");
+
+			if (claim == null)
+				throw new NullReferenceException("claim");
+
+			var claimToDelete = user.UserClaims.FirstOrDefault(x => x.ClaimType == claim.Type && x.ClaimValue == claim.Value);
+
+			if (claimToDelete == null)
+				return;
+
+			user.UserClaims.Remove(claimToDelete);
+
+			await Task.Run(() => _userRepository.Update(user));
 		}
 	}
 }
