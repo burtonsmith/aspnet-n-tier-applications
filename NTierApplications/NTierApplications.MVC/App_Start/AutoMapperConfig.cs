@@ -25,17 +25,6 @@ namespace NTierApplications.MVC
 			Mapper.AssertConfigurationIsValid();
 		}
 
-
-		//public static void Initialize(IContainer container)
-		//{
-		//	var types = Assembly.GetExecutingAssembly().GetExportedTypes();
-
-		//	CreateMappings(types);
-		//	CreateCustomMappings(types);
-
-		//	Mapper.AssertConfigurationIsValid();
-		//}
-
 		private static void CreateMappings(IEnumerable<Type> types)
 		{
 			var maps = (from t in types
