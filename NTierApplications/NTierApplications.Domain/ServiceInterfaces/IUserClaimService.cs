@@ -1,4 +1,5 @@
-﻿using NTierApplications.Domain.Entities;
+﻿using Microsoft.AspNet.Identity;
+using NTierApplications.Domain.Entities;
 
 namespace NTierApplications.Domain.ServiceInterfaces
 {
