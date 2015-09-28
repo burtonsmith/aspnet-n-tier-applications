@@ -75,11 +75,10 @@ namespace NTierApplications.Data.Repositories
 			if (id == 0)
 				throw new ArgumentNullException("id");
 
-			TEntity entity = new TEntity() {Id = id};
-
 			try
 			{
-				_dbSet.Remove(entity);
+				var entity = _dbSet.Find(id);
+				_dbContext.Entry(entity).State = EntityState.Deleted;
 				_dbContext.SaveChanges();
 			}
 			catch (DbEntityValidationException ex)
