@@ -189,6 +189,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="App_Start\ApplicationRoleManager.cs" />
+    <Compile Include="App_Start\ApplicationSignInManager.cs" />
+    <Compile Include="App_Start\ApplicationUserManager.cs" />
     <Compile Include="App_Start\AutoMapperConfig.cs" />
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\FilterConfig.cs" />
@@ -198,9 +201,14 @@
     <Compile Include="App_Start\StructuremapMvc.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\BaseController.cs" />
+    <Compile Include="Controllers\DepartmentController.cs" />
     <Compile Include="Controllers\EmployeeController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\LocationController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
+    <Compile Include="Controllers\NamePrefixController.cs" />
+    <Compile Include="Controllers\SkillController.cs" />
+    <Compile Include="Controllers\UserRoleController.cs" />
     <Compile Include="DependencyResolution\ControllerConvention.cs" />
     <Compile Include="DependencyResolution\DefaultRegistry.cs" />
     <Compile Include="DependencyResolution\IoC.cs" />
@@ -210,6 +218,7 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Infrastructure\Mapping\AutoMapperExtensions.cs" />
     <Compile Include="Infrastructure\Mapping\ICreateMapping.cs" />
     <Compile Include="Infrastructure\Mapping\ICreateCustomMapping.cs" />
     <Compile Include="Infrastructure\Tasks\IRunAfterEachRequest.cs" />
@@ -225,6 +234,7 @@
     <Compile Include="Models\ManageViewModels.cs" />
     <Compile Include="Models\NamePrefixViewModel.cs" />
     <Compile Include="Models\SkillViewModel.cs" />
+    <Compile Include="Models\UserRoleViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
   </ItemGroup>
@@ -284,6 +294,29 @@
     <Content Include="Views\Manage\VerifyPhoneNumber.cshtml" />
     <Content Include="Views\Shared\Lockout.cshtml" />
     <Content Include="Views\Shared\_LoginPartial.cshtml" />
+    <Content Include="Views\Department\Index.cshtml" />
+    <Content Include="Views\Department\Create.cshtml" />
+    <Content Include="Views\Department\Edit.cshtml" />
+    <Content Include="Views\Department\Delete.cshtml" />
+    <Content Include="Views\Location\Index.cshtml" />
+    <Content Include="Views\Location\Create.cshtml" />
+    <Content Include="Views\Location\Edit.cshtml" />
+    <Content Include="Views\Location\Delete.cshtml" />
+    <Content Include="Views\NamePrefix\Index.cshtml" />
+    <Content Include="Views\NamePrefix\Details.cshtml" />
+    <Content Include="Views\NamePrefix\Create.cshtml" />
+    <Content Include="Views\NamePrefix\Edit.cshtml" />
+    <Content Include="Views\NamePrefix\Delete.cshtml" />
+    <Content Include="Views\Skill\Index.cshtml" />
+    <Content Include="Views\Skill\Details.cshtml" />
+    <Content Include="Views\Skill\Create.cshtml" />
+    <Content Include="Views\Skill\Edit.cshtml" />
+    <Content Include="Views\Skill\Delete.cshtml" />
+    <Content Include="Views\UserRole\Index.cshtml" />
+    <Content Include="Views\UserRole\Details.cshtml" />
+    <Content Include="Views\UserRole\Create.cshtml" />
+    <Content Include="Views\UserRole\Edit.cshtml" />
+    <Content Include="Views\UserRole\Delete.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
