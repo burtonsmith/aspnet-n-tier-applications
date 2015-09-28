@@ -6,6 +6,7 @@ using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
 using NTierApplications.MVC.Models;
+using StructureMap;
 
 namespace NTierApplications.MVC.Controllers
 {
@@ -15,7 +16,8 @@ namespace NTierApplications.MVC.Controllers
         private ApplicationSignInManager _signInManager;
         private ApplicationUserManager _userManager;
 
-        public ManageController()
+		[DefaultConstructor]
+		public ManageController()
         {
         }
 
