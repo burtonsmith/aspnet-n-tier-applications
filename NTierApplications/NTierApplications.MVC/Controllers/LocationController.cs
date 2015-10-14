@@ -11,7 +11,7 @@ using NTierApplications.MVC.Models;
 
 namespace NTierApplications.MVC.Controllers
 {
-    public class LocationController : Controller
+    public class LocationController : BaseController
     {
 	    private readonly ILocationService _locationService;
 

@@ -3,15 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using AutoMapper;
-using Newtonsoft.Json.Linq;
-using NTierApplications.Domain.Entities;
-using NTierApplications.MVC.Infrastructure.Mapping;
 using NTierApplications.MVC.Infrastructure.Tasks;
-using NTierApplications.MVC.Models;
-using StructureMap;
-using StructureMap.TypeRules;
 
-namespace NTierApplications.MVC
+namespace NTierApplications.MVC.Infrastructure.Mapping
 {
 	public class AutoMapperConfig : IRunAtStartup
 	{

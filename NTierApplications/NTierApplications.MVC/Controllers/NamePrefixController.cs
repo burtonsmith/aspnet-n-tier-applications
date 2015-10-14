@@ -11,7 +11,7 @@ using NTierApplications.MVC.Models;
 
 namespace NTierApplications.MVC.Controllers
 {
-    public class NamePrefixController : Controller
+    public class NamePrefixController : BaseController
     {
 	    private readonly INamePrefixService _namePrefixService;
 
@@ -69,7 +69,7 @@ namespace NTierApplications.MVC.Controllers
 			}
             catch
             {
-                return View();
+                return View(viewModel);
             }
         }
 
@@ -106,7 +106,7 @@ namespace NTierApplications.MVC.Controllers
 			}
             catch
             {
-                return View();
+                return View(viewModel);
             }
         }
 

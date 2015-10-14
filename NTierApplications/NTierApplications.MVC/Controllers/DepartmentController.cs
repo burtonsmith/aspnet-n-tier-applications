@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net;
 using System.Web;
 using System.Web.Mvc;
+using System.Web.Security;
 using AutoMapper;
 using NTierApplications.Domain.Entities;
 using NTierApplications.Domain.ServiceInterfaces;
@@ -12,7 +13,8 @@ using WebGrease.Css.Extensions;
 
 namespace NTierApplications.MVC.Controllers
 {
-	public class DepartmentController : Controller
+    [Authorize]
+	public class DepartmentController : BaseController
 	{
 		private readonly IDepartmentService _departmentService;
 
@@ -21,26 +23,26 @@ namespace NTierApplications.MVC.Controllers
 			_departmentService = departmentService;
 		}
 
-		// GET: Department
-		public ActionResult Index()
-		{
-			var departments = _departmentService.GetAll().ToList();
+        // GET: Department
+        public ActionResult Index()
+        {
+            var departments = _departmentService.GetAll().ToList();
 
 			var viewModel = Mapper.Map<IEnumerable<Department>, IEnumerable<DepartmentViewModel>>(departments);
-			viewModel.ForEach(x => x.HasEmployees = departments.FirstOrDefault(y => y.Id == x.Id).Employees.Any());
 
 			return View(viewModel);
 		}
 
-		// GET: Department/Create
-		public ActionResult Create()
+        // GET: Department/Create
+        [Authorize(Roles = "Admin, Manager")]
+        public ActionResult Create()
 		{
-
 			return View();
 		}
 
-		// POST: Department/Create
-		[HttpPost]
+        // POST: Department/Create
+        [Authorize(Roles = "Admin, Manager")]
+        [HttpPost]
 		[ValidateAntiForgeryToken]
 		public ActionResult Create(DepartmentViewModel viewModel)
 		{
@@ -61,8 +63,9 @@ namespace NTierApplications.MVC.Controllers
 			}
 		}
 
-		// GET: Department/Edit/5
-		public ActionResult Edit(int id)
+        // GET: Department/Edit/5
+        [Authorize(Roles = "Admin, Manager")]
+        public ActionResult Edit(int id)
 		{
 			if (id == default(int))
 				return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
@@ -80,7 +83,8 @@ namespace NTierApplications.MVC.Controllers
 		// POST: Department/Edit/5
 		[HttpPost]
 		[ValidateAntiForgeryToken]
-		public ActionResult Edit(int id, DepartmentViewModel viewModel)
+        [Authorize(Roles = "Admin, Manager")]
+        public ActionResult Edit(int id, DepartmentViewModel viewModel)
 		{
 			try
 			{
@@ -99,8 +103,9 @@ namespace NTierApplications.MVC.Controllers
 			}
 		}
 
-		// GET: Department/Delete/5
-		public ActionResult Delete(int id)
+        // GET: Department/Delete/5
+        [Authorize(Roles = "Admin")]
+        public ActionResult Delete(int id)
 		{
 			if (id == default(int))
 				return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
@@ -118,7 +123,8 @@ namespace NTierApplications.MVC.Controllers
 		// POST: Department/Delete/5
 		[HttpPost, ActionName("Delete")]
 		[ValidateAntiForgeryToken]
-		public ActionResult Delete(int id, DepartmentViewModel viewModel)
+        [Authorize(Roles = "Admin")]
+        public ActionResult Delete(int id, DepartmentViewModel viewModel)
 		{
 			try
 			{

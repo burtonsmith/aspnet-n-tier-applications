@@ -63,6 +63,10 @@
     <Compile Include="Mappings\LocationMapping.cs" />
     <Compile Include="Mappings\NamePrefixMapping.cs" />
     <Compile Include="Mappings\SkillMapping.cs" />
+    <Compile Include="Mappings\UserClaimMapping.cs" />
+    <Compile Include="Mappings\UserLoginMapping.cs" />
+    <Compile Include="Mappings\UserMapping.cs" />
+    <Compile Include="Mappings\UserRoleMapping.cs" />
     <Compile Include="Migrations\201509161803358_InitialCreate.cs" />
     <Compile Include="Migrations\201509161803358_InitialCreate.Designer.cs">
       <DependentUpon>201509161803358_InitialCreate.cs</DependentUpon>
@@ -70,6 +74,10 @@
     <Compile Include="Migrations\201509242001586_AddIdentityTables.cs" />
     <Compile Include="Migrations\201509242001586_AddIdentityTables.Designer.cs">
       <DependentUpon>201509242001586_AddIdentityTables.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201510012008027_AddedAttributeMappingForUsers.cs" />
+    <Compile Include="Migrations\201510012008027_AddedAttributeMappingForUsers.Designer.cs">
+      <DependentUpon>201510012008027_AddedAttributeMappingForUsers.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -91,6 +99,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201509242001586_AddIdentityTables.resx">
       <DependentUpon>201509242001586_AddIdentityTables.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201510012008027_AddedAttributeMappingForUsers.resx">
+      <DependentUpon>201510012008027_AddedAttributeMappingForUsers.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

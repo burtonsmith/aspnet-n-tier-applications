@@ -11,7 +11,7 @@ using NTierApplications.MVC.Models;
 
 namespace NTierApplications.MVC.Controllers
 {
-    public class SkillController : Controller
+    public class SkillController : BaseController
     {
 	    private readonly ISkillService _skillService;
 
