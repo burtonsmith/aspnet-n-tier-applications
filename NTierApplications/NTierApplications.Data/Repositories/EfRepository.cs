@@ -49,16 +49,13 @@ namespace NTierApplications.Data.Repositories
 		/// <exception cref="ArgumentNullException"><paramref name="entity"/> is <see langword="null" />.</exception>
 		public void Update(TEntity entity)
 		{
-			if (entity == null)
-				throw new ArgumentNullException("entity");
-
 			try
 			{
-				_dbSet.Attach(entity);
-				_dbContext.Entry(entity).State = EntityState.Modified;
-				_dbContext.SaveChanges();
-			}
-			catch (DbEntityValidationException ex)
+                _dbSet.Attach(entity);
+                _dbContext.Entry(entity).State = EntityState.Modified;
+                _dbContext.SaveChanges();
+            }
+            catch (DbEntityValidationException ex)
 			{
 				ThrowValidationError(ex);
 			}
