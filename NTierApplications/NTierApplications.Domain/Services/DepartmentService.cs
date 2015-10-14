@@ -30,9 +30,6 @@ namespace NTierApplications.Domain.Services
 		/// <exception cref="ArgumentNullException"><paramref name="entity"/> is <see langword="null" />.</exception>
 		public void Update(Department entity)
 		{
-			if(entity == null)
-				throw new ArgumentNullException("entity");
-
 			_departmentRepository.Update(entity);
 		}
 

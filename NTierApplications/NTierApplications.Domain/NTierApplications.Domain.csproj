@@ -63,8 +63,6 @@
     <Compile Include="ServiceInterfaces\ILocationService.cs" />
     <Compile Include="ServiceInterfaces\INamePrefixService.cs" />
     <Compile Include="ServiceInterfaces\ISkillService.cs" />
-    <Compile Include="ServiceInterfaces\IUserClaimService.cs" />
-    <Compile Include="ServiceInterfaces\IUserLoginService.cs" />
     <Compile Include="ServiceInterfaces\IUserRoleService.cs" />
     <Compile Include="ServiceInterfaces\IUserService.cs" />
     <Compile Include="Services\DepartmentService.cs" />
@@ -72,8 +70,6 @@
     <Compile Include="Services\LocationService.cs" />
     <Compile Include="Services\NamePrefixService.cs" />
     <Compile Include="Services\SkillService.cs" />
-    <Compile Include="Services\UserClaimService.cs" />
-    <Compile Include="Services\UserLoginService.cs" />
     <Compile Include="Services\UserRoleService.cs" />
     <Compile Include="Services\UserService.cs" />
   </ItemGroup>

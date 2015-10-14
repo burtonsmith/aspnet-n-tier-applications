@@ -14,10 +14,11 @@ namespace NTierApplications.Domain.ServiceInterfaces
 		IUserLockoutStore<User,	int>,
 		IUserLoginStore<User, int>,
 		IUserClaimStore<User, int>,
-		IUserStore<User, int> // Kept so I know it was implemented.
+        IQueryableUserStore<User, int>,
+        IUserRoleStore<User, int>,
+	    IUserStore<User, int> // Kept so I know it was implemented.
 	{
 		Task<User> FindByLoginAsync(string userName, string password);
-		Task<IEnumerable<User>> GetAllAsync();
 		Task<User> FindByProviderAsync(string loginProvider, string providerKey);
 		Task<User> FindAsync(string loginProvider, string providerKey);
 	}

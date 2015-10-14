@@ -29,9 +29,6 @@ namespace NTierApplications.Domain.Services
 			await Task.Run(() => _userRoleRepository.Insert(role));
 		}
 
-		/// <summary>
-		///     Use DeleteByIdAsync instead as this it will throw an exception when the new instance of the object is created in the Repository.
-		/// </summary>
 		public async Task DeleteAsync(UserRole role)
 		{
             if (role == null)
@@ -80,9 +77,6 @@ namespace NTierApplications.Domain.Services
 
 		public async Task UpdateAsync(UserRole role)
 		{
-			if(role == null)
-				throw new ArgumentNullException("role");
-
 			await Task.Run((() => _userRoleRepository.Update(role)));
 		}
 

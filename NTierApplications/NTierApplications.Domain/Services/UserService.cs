@@ -15,13 +15,15 @@ namespace NTierApplications.Domain.Services
 	public class UserService : IUserService
 	{
 		private readonly IRepository<User> _userRepository;
+	    private readonly IRepository<UserRole> _userRoleRepository; 
 
 		bool _disposed;
 		readonly SafeHandle _handle = new SafeFileHandle(IntPtr.Zero, true);
 
-		public UserService(IRepository<User> userRepository)
+	    public UserService(IRepository<User> userRepository, IRepository<UserRole> userRole)
 		{
 			_userRepository = userRepository;
+	        _userRoleRepository = userRole;
 		}
 
 		public void Dispose()
@@ -41,416 +43,531 @@ namespace NTierApplications.Domain.Services
 			_disposed = true;
 		}
 
-		public Task CreateAsync(User user)
-		{
-			if (user == null)
-				throw new ArgumentNullException("user");
 
-			_userRepository.Insert(user);
+        //
+        // Basic CRUD Management
+        //
 
-			return Task.FromResult<object>(null);
-		}
 
-		public Task UpdateAsync(User user)
-		{
-			if (user == null)
-				throw new ArgumentNullException("user");
+        #region Basic CRUD
 
-			_userRepository.Update(user);
+        public IQueryable<User> Users => _userRepository.Table.AsQueryable();
 
-			return Task.FromResult<object>(null);
-		}
+        public Task CreateAsync(User user)
+        {
+            if (user == null)
+                throw new ArgumentNullException("user");
 
-		public Task DeleteAsync(User user)
-		{
-			throw new NotImplementedException();
-		}
+            _userRepository.Insert(user);
 
-		public Task<User> FindByIdAsync(int userId)
-		{
-			if (userId == 0)
-				throw new ArgumentNullException("userId");
+            return Task.FromResult<object>(null);
+        }
 
-			var result = _userRepository.GetById(userId);
+        public Task UpdateAsync(User user)
+        {
+            _userRepository.Update(user);
 
-			if (result != null)
-				return Task.FromResult(result);
+            return Task.FromResult<object>(null);
+        }
 
-			return Task.FromResult<User>(null);
-		}
+        public Task DeleteAsync(User user)
+        {
+            if (user == null)
+                throw new ArgumentNullException("user");
 
-		public Task<User> FindByNameAsync(string userName)
-		{
-			if (string.IsNullOrEmpty(userName))
-				throw new ArgumentNullException("userName");
+            _userRepository.Delete(user.Id);
 
-			var result =
-				_userRepository.Table.FirstOrDefault(x => x.UserName.ToUpper() == userName.ToUpper());
+            return Task.FromResult<object>(null);
+        }
 
-			return Task.FromResult(result);
-		}
+        public Task<User> FindByIdAsync(int userId)
+        {
+            if (userId == 0)
+                throw new ArgumentNullException("userId");
 
-		public Task<IEnumerable<User>> GetAllAsync()
-		{
-			return Task.FromResult(_userRepository.Table);
-		}
+            var result = _userRepository.GetById(userId);
 
-		public Task SetPasswordHashAsync(User user, string passwordHash)
-		{
-			if (user == null)
-				throw new ArgumentNullException("user");
+            if (result != null)
+                return Task.FromResult(result);
 
-			user.PasswordHash = passwordHash;
+            return Task.FromResult<User>(null);
+        }
 
-			return Task.FromResult(0);
-		}
+        public Task<User> FindByNameAsync(string userName)
+        {
+            if (string.IsNullOrEmpty(userName))
+                throw new ArgumentNullException("userName");
 
-		public Task<string> GetPasswordHashAsync(User user)
-		{
-			if (user == null)
-				throw new ArgumentNullException("user");
+            var result =
+                _userRepository.Table.FirstOrDefault(x => x.UserName.ToUpper() == userName.ToUpper());
 
-			string passwordHash = _userRepository.GetById(user.Id).PasswordHash;
+            return Task.FromResult(result);
+        }
 
-			return Task.FromResult(passwordHash);
-		}
+        #endregion
 
-		public Task<bool> HasPasswordAsync(User user)
-		{
-			if (user == null)
-				throw new ArgumentNullException("user");
 
-			var hasPassword = !string.IsNullOrEmpty(_userRepository.GetById(user.Id).PasswordHash);
+        //
+        // User Info Management
+        //
 
-			return Task.FromResult(bool.Parse(hasPassword.ToString()));
-		}
 
-		public Task SetSecurityStampAsync(User user, string stamp)
-		{
-			if (user == null)
-				throw new ArgumentNullException("user");
+        #region User Info
 
-			user.SecurityStamp = stamp;
+        public Task SetPasswordHashAsync(User user, string passwordHash)
+        {
+            if (user == null)
+                throw new ArgumentNullException("user");
 
-			return Task.FromResult(0);
-		}
+            user.PasswordHash = passwordHash;
 
-		public Task<string> GetSecurityStampAsync(User user)
-		{
-			if (user == null)
-				throw new ArgumentNullException("user");
+            return Task.FromResult(0);
+        }
 
-			return Task.FromResult(user.SecurityStamp);
-		}
+        public Task<string> GetPasswordHashAsync(User user)
+        {
+            if (user == null)
+                throw new ArgumentNullException("user");
 
-		public Task SetEmailAsync(User user, string email)
-		{
-			if (user == null)
-				throw new ArgumentNullException("user");
+            string passwordHash = _userRepository.GetById(user.Id).PasswordHash;
 
-			user.Email = email;
+            return Task.FromResult(passwordHash);
+        }
 
-			return Task.FromResult(0);
-		}
+        public Task<bool> HasPasswordAsync(User user)
+        {
+            if (user == null)
+                throw new ArgumentNullException("user");
 
-		public Task<string> GetEmailAsync(User user)
-		{
-			if (user == null)
-				throw new ArgumentNullException("user");
+            var hasPassword = !string.IsNullOrEmpty(_userRepository.GetById(user.Id).PasswordHash);
 
-			return Task.FromResult(user.Email);
-		}
+            return Task.FromResult(bool.Parse(hasPassword.ToString()));
+        }
 
-		public Task<bool> GetEmailConfirmedAsync(User user)
-		{
-			if (user == null)
-				throw new ArgumentNullException("user");
+        public Task SetSecurityStampAsync(User user, string stamp)
+        {
+            if (user == null)
+                throw new ArgumentNullException("user");
 
-			return Task.FromResult(user.EmailConfirmed);
-		}
+            user.SecurityStamp = stamp;
 
-		public Task SetEmailConfirmedAsync(User user, bool confirmed)
-		{
-			if (user == null)
-				throw new ArgumentNullException("user");
+            return Task.FromResult(0);
+        }
 
-			user.EmailConfirmed = confirmed;
+        public Task<string> GetSecurityStampAsync(User user)
+        {
+            if (user == null)
+                throw new ArgumentNullException("user");
 
-			return Task.FromResult(0);
-		}
+            return Task.FromResult(user.SecurityStamp);
+        }
 
-		public Task<User> FindByEmailAsync(string email)
-		{
-			if (string.IsNullOrEmpty(email))
-				throw new ArgumentNullException("email");
+        public Task SetEmailAsync(User user, string email)
+        {
+            if (user == null)
+                throw new ArgumentNullException("user");
 
-			var result =
-				_userRepository.Table.FirstOrDefault(x => x.Email.ToUpper() == email.ToUpper());
+            user.Email = email;
 
-			if (result != null)
-				return Task.FromResult(result);
+            return Task.FromResult(0);
+        }
 
-			return Task.FromResult<User>(null);
-		}
+        public Task<string> GetEmailAsync(User user)
+        {
+            if (user == null)
+                throw new ArgumentNullException("user");
 
-		public Task SetPhoneNumberAsync(User user, string phoneNumber)
-		{
-			if (user == null)
-				throw new ArgumentNullException("user");
+            return Task.FromResult(user.Email);
+        }
 
-			user.PhoneNumber = phoneNumber;
+        public Task<bool> GetEmailConfirmedAsync(User user)
+        {
+            if (user == null)
+                throw new ArgumentNullException("user");
 
-			return Task.FromResult(0);
-		}
+            return Task.FromResult(user.EmailConfirmed);
+        }
 
-		public Task<string> GetPhoneNumberAsync(User user)
-		{
-			if (user == null)
-				throw new ArgumentNullException("user");
+        public Task SetEmailConfirmedAsync(User user, bool confirmed)
+        {
+            if (user == null)
+                throw new ArgumentNullException("user");
 
-			return Task.FromResult(user.PhoneNumber);
-		}
+            user.EmailConfirmed = confirmed;
 
-		public Task<bool> GetPhoneNumberConfirmedAsync(User user)
-		{
-			if (user == null)
-				throw new ArgumentNullException("user");
+            return Task.FromResult(0);
+        }
 
-			return Task.FromResult(user.PhoneNumberConfirmed);
-		}
+        public Task<User> FindByEmailAsync(string email)
+        {
+            if (string.IsNullOrEmpty(email))
+                throw new ArgumentNullException("email");
 
-		public Task SetPhoneNumberConfirmedAsync(User user, bool confirmed)
-		{
-			if (user == null)
-				throw new ArgumentNullException("user");
+            var result =
+                _userRepository.Table.FirstOrDefault(x => x.Email.ToUpper() == email.ToUpper());
 
-			user.PhoneNumberConfirmed = confirmed;
+            if (result != null)
+                return Task.FromResult(result);
 
-			return Task.FromResult(0);
-		}
+            return Task.FromResult<User>(null);
+        }
 
-		public Task SetTwoFactorEnabledAsync(User user, bool enabled)
-		{
-			if (user == null)
-				throw new ArgumentNullException("user");
+        public Task SetPhoneNumberAsync(User user, string phoneNumber)
+        {
+            if (user == null)
+                throw new ArgumentNullException("user");
 
-			user.TwoFactorEnabled = enabled;
+            user.PhoneNumber = phoneNumber;
 
-			return Task.FromResult(0);
+            return Task.FromResult(0);
+        }
 
-		}
+        public Task<string> GetPhoneNumberAsync(User user)
+        {
+            if (user == null)
+                throw new ArgumentNullException("user");
 
-		public Task<bool> GetTwoFactorEnabledAsync(User user)
-		{
-			if (user == null)
-				throw new ArgumentNullException("user");
+            return Task.FromResult(user.PhoneNumber);
+        }
 
-			return Task.FromResult(user.TwoFactorEnabled);
-		}
+        public Task<bool> GetPhoneNumberConfirmedAsync(User user)
+        {
+            if (user == null)
+                throw new ArgumentNullException("user");
 
-		public Task<DateTimeOffset> GetLockoutEndDateAsync(User user)
-		{
-			if (user == null)
-				throw new ArgumentNullException("user");
+            return Task.FromResult(user.PhoneNumberConfirmed);
+        }
 
-			return Task.FromResult(user.LockoutEndDateUtc.HasValue
-				? new DateTimeOffset(DateTime.SpecifyKind(user.LockoutEndDateUtc.Value, DateTimeKind.Utc))
-				: new DateTimeOffset());
+        public Task SetPhoneNumberConfirmedAsync(User user, bool confirmed)
+        {
+            if (user == null)
+                throw new ArgumentNullException("user");
 
-		}
+            user.PhoneNumberConfirmed = confirmed;
 
-		public Task SetLockoutEndDateAsync(User user, DateTimeOffset lockoutEnd)
-		{
-			if (user == null)
-				throw new ArgumentNullException("user");
+            return Task.FromResult(0);
+        }
 
-			user.LockoutEndDateUtc = lockoutEnd.UtcDateTime;
-			_userRepository.Update(user);
+        public Task SetTwoFactorEnabledAsync(User user, bool enabled)
+        {
+            if (user == null)
+                throw new ArgumentNullException("user");
 
-			return Task.FromResult(0);
-		}
+            user.TwoFactorEnabled = enabled;
 
-		public Task<int> IncrementAccessFailedCountAsync(User user)
-		{
-			if (user == null)
-				throw new ArgumentNullException("user");
+            return Task.FromResult(0);
 
-			user.AccessFailedCount++;
-			_userRepository.Update(user);
+        }
 
-			return Task.FromResult(user.AccessFailedCount);
-		}
+        public Task<bool> GetTwoFactorEnabledAsync(User user)
+        {
+            if (user == null)
+                throw new ArgumentNullException("user");
 
-		public Task ResetAccessFailedCountAsync(User user)
-		{
-			if (user == null)
-				throw new ArgumentNullException("user");
+            return Task.FromResult(user.TwoFactorEnabled);
+        }
 
-			user.AccessFailedCount = 0;
-			_userRepository.Update(user);
+        #endregion
 
-			return Task.FromResult(0);
-		}
 
-		public Task<int> GetAccessFailedCountAsync(User user)
-		{
-			if (user == null)
-				throw new ArgumentNullException("user");
+        //
+        // Login Management
+        //
 
-			return Task.FromResult(user.AccessFailedCount);
-		}
 
-		public Task<bool> GetLockoutEnabledAsync(User user)
-		{
-			if (user == null)
-				throw new ArgumentNullException("user");
+        #region Login
 
-			return Task.FromResult(user.LockoutEnabled);
-		}
+        public Task<DateTimeOffset> GetLockoutEndDateAsync(User user)
+        {
+            if (user == null)
+                throw new ArgumentNullException("user");
 
-		public Task SetLockoutEnabledAsync(User user, bool enabled)
-		{
-			if (user == null)
-				throw new ArgumentNullException("user");
+            return Task.FromResult(user.LockoutEndDateUtc.HasValue
+                ? new DateTimeOffset(DateTime.SpecifyKind(user.LockoutEndDateUtc.Value, DateTimeKind.Utc))
+                : new DateTimeOffset());
+        }
 
-			user.LockoutEnabled = enabled;
+        public Task SetLockoutEndDateAsync(User user, DateTimeOffset lockoutEnd)
+        {
+            if (user == null)
+                throw new ArgumentNullException("user");
 
-			return Task.FromResult(0);
-		}
+            user.LockoutEndDateUtc = lockoutEnd.UtcDateTime;
+            _userRepository.Update(user);
 
-		public async Task<User> FindByLoginAsync(string userName, string password)
-		{
-			if (userName == null)
-				throw new ArgumentNullException("userName");
+            return Task.FromResult(0);
+        }
 
-			return
-				await
-					Task.Run(() => _userRepository.Table.FirstOrDefault(x => x.UserName == userName && x.PasswordHash == password));
-		}
+        public Task<int> IncrementAccessFailedCountAsync(User user)
+        {
+            if (user == null)
+                throw new ArgumentNullException("user");
 
+            user.AccessFailedCount++;
+            _userRepository.Update(user);
 
-		public async Task<User> FindByProviderAsync(string loginProvider, string providerKey)
-		{
-			if (loginProvider == null)
-				throw new ArgumentNullException("loginProvider");
+            return Task.FromResult(user.AccessFailedCount);
+        }
 
-			return await Task.Run(() => _userRepository.Table.FirstOrDefault(
-					x =>
-						x.Id ==
-						x.UserLogins.FirstOrDefault(y => y.LoginProvider == loginProvider && y.ProviderKey == providerKey).UserId));
-		}
+        public Task ResetAccessFailedCountAsync(User user)
+        {
+            if (user == null)
+                throw new ArgumentNullException("user");
 
-		public async Task<User> FindAsync(string loginProvider, string providerKey)
-		{
-			if (loginProvider == null)
-				throw new ArgumentNullException("loginProvider");
+            user.AccessFailedCount = 0;
+            _userRepository.Update(user);
 
-			return await Task.Run(() => _userRepository.Table.FirstOrDefault(x => x.UserName == loginProvider && x.PasswordHash == providerKey));
-		}
+            return Task.FromResult(0);
+        }
 
-		public async Task AddLoginAsync(User user, UserLoginInfo login)
-		{
-			if (login == null)
-				throw new ArgumentNullException("login");
+        public Task<int> GetAccessFailedCountAsync(User user)
+        {
+            if (user == null)
+                throw new ArgumentNullException("user");
 
-			var loginToAdd = new UserLogin()
-			{
-				LoginProvider = login.LoginProvider,
-				ProviderKey = login.ProviderKey
-			};
+            return Task.FromResult(user.AccessFailedCount);
+        }
 
-			user.UserLogins.Add(loginToAdd);
+        public Task<bool> GetLockoutEnabledAsync(User user)
+        {
+            if (user == null)
+                throw new ArgumentNullException("user");
 
-			await Task.Run(() => _userRepository.Update(user));
-		}
+            return Task.FromResult(user.LockoutEnabled);
+        }
 
-		public async Task<User> FindAsync(UserLoginInfo login)
-		{
-			if (login == null)
-				throw new ArgumentNullException("login");
+        public Task SetLockoutEnabledAsync(User user, bool enabled)
+        {
+            if (user == null)
+                throw new ArgumentNullException("user");
 
-			var user = _userRepository.Table.FirstOrDefault(x =>
-			{
-				var userLogin = x.UserLogins.FirstOrDefault(y => y.LoginProvider == login.LoginProvider && y.ProviderKey == login.ProviderKey);
-				return userLogin != null && x.Id == userLogin.UserId;
-			});
+            user.LockoutEnabled = enabled;
 
-			return await Task.Run(() => user);
-		}
+            return Task.FromResult(0);
+        }
 
-		public async Task<IList<UserLoginInfo>> GetLoginsAsync(User user)
-		{
-			if (user == null)
-				throw new ArgumentNullException("user");
+        public async Task<User> FindByLoginAsync(string userName, string password)
+        {
+            if (userName == null)
+                throw new ArgumentNullException("userName");
 
-			var logins = from l in user.UserLogins
-						 select new UserLoginInfo(l.LoginProvider, l.ProviderKey)
-						 {
-							 LoginProvider = l.LoginProvider,
-							 ProviderKey = l.ProviderKey
-						 };
+            return
+                await
+                    Task.Run(() => _userRepository.Table.FirstOrDefault(x => x.UserName == userName && x.PasswordHash == password));
+        }
 
-			return await Task.Run(() => logins.ToList());
-		}
 
-		public async Task RemoveLoginAsync(User user, UserLoginInfo login)
-		{
-			if (login == null)
-				throw new ArgumentNullException("login");
+        public async Task<User> FindByProviderAsync(string loginProvider, string providerKey)
+        {
+            if (loginProvider == null)
+                throw new ArgumentNullException("loginProvider");
 
-			var loginToDelete =
-				user.UserLogins.FirstOrDefault(x => x.LoginProvider == login.LoginProvider && x.ProviderKey == login.ProviderKey);
+            return await Task.Run(() => _userRepository.Table.FirstOrDefault(
+                    x =>
+                        x.Id ==
+                        x.UserLogins.FirstOrDefault(y => y.LoginProvider == loginProvider && y.ProviderKey == providerKey).UserId));
+        }
 
-			if (loginToDelete == null)
-				return;
+        public async Task<User> FindAsync(string loginProvider, string providerKey)
+        {
+            if (loginProvider == null)
+                throw new ArgumentNullException("loginProvider");
 
-			user.UserLogins.Remove(loginToDelete);
+            return await Task.Run(() => _userRepository.Table.FirstOrDefault(x => x.UserName == loginProvider && x.PasswordHash == providerKey));
+        }
 
-			await Task.Run(() => _userRepository.Update(user));
-		}
+        public async Task AddLoginAsync(User user, UserLoginInfo login)
+        {
+            if (login == null)
+                throw new ArgumentNullException("login");
 
-		public async Task<IList<Claim>> GetClaimsAsync(User user)
-		{
-			if (user == null)
-				throw new ArgumentNullException("user", "A valid user us required.");
+            var loginToAdd = new UserLogin()
+            {
+                LoginProvider = login.LoginProvider,
+                ProviderKey = login.ProviderKey
+            };
 
-			var claims = from c in user.UserClaims
-						 select new Claim(c.ClaimType, c.ClaimValue);
+            user.UserLogins.Add(loginToAdd);
 
-			return await Task.Run(() => claims.ToList());
-		}
+            await Task.Run(() => _userRepository.Update(user));
+        }
 
-		public async Task AddClaimAsync(User user, Claim claim)
-		{
-			if (user == null)
-				throw new ArgumentNullException("user");
+        public async Task<User> FindAsync(UserLoginInfo login)
+        {
+            if (login == null)
+                throw new ArgumentNullException("login");
 
-			if (claim == null)
-				throw new NullReferenceException("claim");
+            var user = _userRepository.Table.FirstOrDefault(x =>
+            {
+                var userLogin = x.UserLogins.FirstOrDefault(y => y.LoginProvider == login.LoginProvider && y.ProviderKey == login.ProviderKey);
+                return userLogin != null && x.Id == userLogin.UserId;
+            });
 
-			var newClaim = new UserClaim() { ClaimType = claim.Type, ClaimValue = claim.Value, UserId = user.Id };
+            return await Task.Run(() => user);
+        }
 
-			user.UserClaims.Add(newClaim);
+        public async Task<IList<UserLoginInfo>> GetLoginsAsync(User user)
+        {
+            if (user == null)
+                throw new ArgumentNullException("user");
 
-			await Task.Run(() => _userRepository.Update(user));
-		}
+            var logins = from l in user.UserLogins
+                         select new UserLoginInfo(l.LoginProvider, l.ProviderKey)
+                         {
+                             LoginProvider = l.LoginProvider,
+                             ProviderKey = l.ProviderKey
+                         };
 
-		public async Task RemoveClaimAsync(User user, Claim claim)
-		{
-			if (user == null)
-				throw new ArgumentNullException("user");
+            return await Task.Run(() => logins.ToList());
+        }
 
-			if (claim == null)
-				throw new NullReferenceException("claim");
+        public async Task RemoveLoginAsync(User user, UserLoginInfo login)
+        {
+            if (login == null)
+                throw new ArgumentNullException("login");
 
-			var claimToDelete = user.UserClaims.FirstOrDefault(x => x.ClaimType == claim.Type && x.ClaimValue == claim.Value);
+            var loginToDelete =
+                user.UserLogins.FirstOrDefault(x => x.LoginProvider == login.LoginProvider && x.ProviderKey == login.ProviderKey);
 
-			if (claimToDelete == null)
-				return;
+            if (loginToDelete == null)
+                return;
 
-			user.UserClaims.Remove(claimToDelete);
+            user.UserLogins.Remove(loginToDelete);
 
-			await Task.Run(() => _userRepository.Update(user));
-		}
-	}
+            await Task.Run(() => _userRepository.Update(user));
+        }
+
+        #endregion
+
+
+        //
+        // Claims Management
+        //
+
+
+        #region Claims
+
+        public async Task<IList<Claim>> GetClaimsAsync(User user)
+        {
+            if (user == null)
+                throw new ArgumentNullException("user", "A valid user us required.");
+
+            var claims = from c in user.UserClaims
+                         select new Claim(c.ClaimType, c.ClaimValue);
+
+            return await Task.Run(() => claims.ToList());
+        }
+
+        public async Task AddClaimAsync(User user, Claim claim)
+        {
+            if (user == null)
+                throw new ArgumentNullException("user");
+
+            if (claim == null)
+                throw new NullReferenceException("claim");
+
+            var newClaim = new UserClaim() { ClaimType = claim.Type, ClaimValue = claim.Value, UserId = user.Id };
+
+            user.UserClaims.Add(newClaim);
+
+            await Task.Run(() => _userRepository.Update(user));
+        }
+
+        public async Task RemoveClaimAsync(User user, Claim claim)
+        {
+            if (user == null)
+                throw new ArgumentNullException("user");
+
+            if (claim == null)
+                throw new NullReferenceException("claim");
+
+            var claimToDelete = user.UserClaims.FirstOrDefault(x => x.ClaimType == claim.Type && x.ClaimValue == claim.Value);
+
+            if (claimToDelete == null)
+                return;
+
+            user.UserClaims.Remove(claimToDelete);
+
+            await Task.Run(() => _userRepository.Update(user));
+        }
+
+        #endregion
+
+
+        //
+        // Role Management
+        //
+
+
+        #region Roles
+
+        public Task AddToRoleAsync(User user, string roleName)
+        {
+            if (user == null)
+                throw new ArgumentNullException("user");
+
+            if (string.IsNullOrEmpty(roleName))
+                throw new ArgumentException("Argument cannot be null or empty: roleName.");
+
+            var role = _userRoleRepository.Table.FirstOrDefault(x => x.Name == roleName);
+            if (role != null)
+            {
+                user.UserRoles.Add(role);
+                _userRepository.Update(user);
+            }
+
+            return Task.FromResult<object>(null);
+        }
+
+        public Task RemoveFromRoleAsync(User user, string roleName)
+        {
+            if (user == null)
+                throw new ArgumentNullException("user");
+
+            if (string.IsNullOrEmpty(roleName))
+                throw new ArgumentException("Argument cannot be null or empty: roleName.");
+
+            var role = _userRoleRepository.Table.FirstOrDefault(x => x.Name == roleName);
+            if (role != null)
+            {
+                user.UserRoles.Remove(role);
+                _userRepository.Update(user);
+            }
+
+            return Task.FromResult<object>(null);
+
+        }
+
+        public Task<IList<string>> GetRolesAsync(User user)
+        {
+            var roles = new List<string>();
+            user.UserRoles.ToList().ForEach(x => roles.Add(x.Name));
+            return Task.FromResult<IList<string>>(roles);
+        }
+
+        public Task<bool> IsInRoleAsync(User user, string roleName)
+        {
+            if (user == null)
+            {
+                throw new ArgumentNullException("user");
+            }
+
+            if (string.IsNullOrEmpty(roleName))
+            {
+                throw new ArgumentNullException("role");
+            }
+
+            var roles = new List<string>();
+            user.UserRoles.ToList().ForEach(x => roles.Add(x.Name));
+
+            if (roles.Any() && roles.Contains(roleName))
+            {
+                return Task.FromResult(true);
+            }
+
+            return Task.FromResult(false);
+        }
+
+        #endregion
+    }
 }
