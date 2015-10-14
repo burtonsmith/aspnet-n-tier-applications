@@ -25,6 +25,7 @@ namespace NTierApplications.MVC.DependencyResolution {
             {
 	            c.AddRegistry<DefaultRegistry>();
 				c.AddRegistry<TaskRegistry>();
+                c.Policies.SetAllProperties(x => x.NameMatches(name => name.EndsWith("Service")));
             });
         }
     }

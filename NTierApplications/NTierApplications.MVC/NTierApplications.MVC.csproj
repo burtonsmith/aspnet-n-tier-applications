@@ -192,7 +192,12 @@
     <Compile Include="App_Start\ApplicationRoleManager.cs" />
     <Compile Include="App_Start\ApplicationSignInManager.cs" />
     <Compile Include="App_Start\ApplicationUserManager.cs" />
-    <Compile Include="App_Start\AutoMapperConfig.cs" />
+    <Compile Include="Controllers\UserAdminController.cs" />
+    <Compile Include="DependencyResolution\StructureMapFilterProvider.cs" />
+    <Compile Include="Filters\ModelDataProviders\SkillListPopulatorAttribute.cs" />
+    <Compile Include="Filters\ModelDataProviders\LocationSelectListPopulatorAttribute.cs" />
+    <Compile Include="Filters\ModelDataProviders\NamePrefixSelectListPopulatorAttribute.cs" />
+    <Compile Include="Infrastructure\Mapping\AutoMapperConfig.cs" />
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\IdentityConfig.cs" />
@@ -214,7 +219,7 @@
     <Compile Include="DependencyResolution\IoC.cs" />
     <Compile Include="DependencyResolution\StructureMapDependencyScope.cs" />
     <Compile Include="DependencyResolution\StructureMapScopeModule.cs" />
-    <Compile Include="Filters\DepartmentSelectListPopulatorAttribute.cs" />
+    <Compile Include="Filters\ModelDataProviders\DepartmentSelectListPopulatorAttribute.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -229,12 +234,14 @@
     <Compile Include="DependencyResolution\TaskRegistry.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\DepartmentViewModel.cs" />
-    <Compile Include="Models\EmployeeViewModel.cs" />
+    <Compile Include="Models\EmployeeDisplayViewModel.cs" />
+    <Compile Include="Models\EmployeeEditViewModel.cs" />
     <Compile Include="Models\LocationViewModel.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
     <Compile Include="Models\NamePrefixViewModel.cs" />
     <Compile Include="Models\SkillViewModel.cs" />
     <Compile Include="Models\UserRoleViewModel.cs" />
+    <Compile Include="Models\UserViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
   </ItemGroup>
@@ -317,10 +324,19 @@
     <Content Include="Views\UserRole\Create.cshtml" />
     <Content Include="Views\UserRole\Edit.cshtml" />
     <Content Include="Views\UserRole\Delete.cshtml" />
+    <Content Include="Views\Employee\Index.cshtml" />
+    <Content Include="Views\Employee\Details.cshtml" />
+    <Content Include="Views\Employee\Create.cshtml" />
+    <Content Include="Views\Employee\Edit.cshtml" />
+    <Content Include="Views\Employee\Delete.cshtml" />
+    <Content Include="Views\UserAdmin\Index.cshtml" />
+    <Content Include="Views\UserAdmin\Details.cshtml" />
+    <Content Include="Views\UserAdmin\Create.cshtml" />
+    <Content Include="Views\UserAdmin\Edit.cshtml" />
+    <Content Include="Views\UserAdmin\Delete.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Views\Employee\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff" />
