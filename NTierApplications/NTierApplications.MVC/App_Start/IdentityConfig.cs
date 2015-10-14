@@ -1,15 +1,5 @@
-﻿using System;
-using System.Security.Claims;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Microsoft.AspNet.Identity;
-using Microsoft.AspNet.Identity.Owin;
-using Microsoft.Owin;
-using Microsoft.Owin.Security;
-using NTierApplications.Data.Context;
-using NTierApplications.Data.Repositories;
-using NTierApplications.Domain.Entities;
-using NTierApplications.Domain.ServiceInterfaces;
-using NTierApplications.Domain.Services;
 
 namespace NTierApplications.MVC
 {
