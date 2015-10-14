@@ -23,15 +23,16 @@ using WebActivatorEx;
 [assembly: ApplicationShutdownMethod(typeof(StructuremapMvc), "End")]
 
 namespace NTierApplications.MVC.App_Start {
-	using System.Web.Mvc;
+    using System.Web.Mvc;
 
     using Microsoft.Web.Infrastructure.DynamicModuleHelper;
 
-	using NTierApplications.MVC.DependencyResolution;
+    using NTierApplications.MVC.DependencyResolution;
 
     using StructureMap;
-    
-	public static class StructuremapMvc {
+    using System.Linq;
+
+    public static class StructuremapMvc {
         #region Public Properties
 
         public static StructureMapDependencyScope StructureMapDependencyScope { get; set; }
@@ -46,6 +47,9 @@ namespace NTierApplications.MVC.App_Start {
 		
         public static void Start() {
             IContainer container = IoC.Initialize();
+            var oldProvider = FilterProviders.Providers.Single(f => f is FilterAttributeFilterProvider);
+            FilterProviders.Providers.Remove(oldProvider);
+            FilterProviders.Providers.Add(new StructureMapFilterProvider(container));
             StructureMapDependencyScope = new StructureMapDependencyScope(container);
             DependencyResolver.SetResolver(StructureMapDependencyScope);
             DynamicModuleUtility.RegisterModule(typeof(StructureMapScopeModule));
