@@ -21,7 +21,9 @@ namespace NTierApplications.MVC
 		public static ApplicationUserManager Create(IdentityFactoryOptions<ApplicationUserManager> options, IOwinContext context)
 		{
 			var userRepository = new EfRepository<User>(new NTierApplicationsDataContext("NTierApplicationsDataContext"));
-			var userService = new UserService(userRepository);
+            var userRoleRepository = new EfRepository<UserRole>(new NTierApplicationsDataContext("NTierApplicationsDataContext"));
+
+            var userService = new UserService(userRepository, userRoleRepository);
 
 			var manager = new ApplicationUserManager(userService);
 			// Configure validation logic for usernames
