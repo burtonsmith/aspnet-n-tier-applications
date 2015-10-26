@@ -17,7 +17,7 @@ using WebGrease.Css.Extensions;
 
 namespace NTierApplications.MVC.Controllers
 {
-    public class UserAdminController : Controller
+    public class UserAdminController : BaseController
     {
         private readonly IUserService _userService;
         private readonly IUserRoleService _roleService;
@@ -49,7 +49,6 @@ namespace NTierApplications.MVC.Controllers
                 return HttpNotFound();
 
             var viewModel = Mapper.Map<UserViewModel>(user);
-            GetRelatedData(viewModel);
 
             return View(viewModel);
         }
@@ -58,7 +57,6 @@ namespace NTierApplications.MVC.Controllers
         public ActionResult Create()
         {
             var viewModel = new UserViewModel();
-            GetRelatedData(viewModel);
             return View(viewModel);
         }
 
@@ -68,7 +66,6 @@ namespace NTierApplications.MVC.Controllers
         {
             if (!ModelState.IsValid)
             {
-                GetRelatedData(viewModel);
                 return View(viewModel);
             }
 
@@ -81,7 +78,6 @@ namespace NTierApplications.MVC.Controllers
             }
             catch
             {
-                GetRelatedData(viewModel);
                 ModelState.AddModelError("", "An error occured. The User was not created.");
                 return View(viewModel);
             }
@@ -99,7 +95,6 @@ namespace NTierApplications.MVC.Controllers
                 return HttpNotFound();
 
             var viewModel = Mapper.Map<UserViewModel>(user);
-            GetRelatedData(viewModel);
 
             return View(viewModel);
         }
@@ -110,7 +105,6 @@ namespace NTierApplications.MVC.Controllers
         {
             if (!ModelState.IsValid)
             {
-                GetRelatedData(viewModel);
                 return View(viewModel);
             }
 
@@ -141,7 +135,6 @@ namespace NTierApplications.MVC.Controllers
                 return HttpNotFound();
 
             var viewModel = Mapper.Map<UserViewModel>(user);
-            GetRelatedData(viewModel);
 
             return View(viewModel);
         }
@@ -163,14 +156,5 @@ namespace NTierApplications.MVC.Controllers
                 return View(viewModel);
             }
         }
-
-        #region Helpers
-
-        private void GetRelatedData(UserViewModel viewModel)
-        {
-            viewModel.UserRoleList = _roleService.Roles;
-        }
-
-        #endregion
     }
 }

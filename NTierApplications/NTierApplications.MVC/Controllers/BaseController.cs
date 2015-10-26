@@ -10,7 +10,8 @@ namespace NTierApplications.MVC.Controllers
     [DepartmentSelectListPopulator, 
         NamePrefixSelectListPopulator,
         SkillListPopulator,
-        LocationSelectListPopulator]
+        LocationSelectListPopulator,
+        UserRoleListPopulator]
     public abstract class BaseController : Controller
     {
     }

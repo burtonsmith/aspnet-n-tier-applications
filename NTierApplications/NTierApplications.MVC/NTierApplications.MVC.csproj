@@ -194,6 +194,7 @@
     <Compile Include="App_Start\ApplicationUserManager.cs" />
     <Compile Include="Controllers\UserAdminController.cs" />
     <Compile Include="DependencyResolution\StructureMapFilterProvider.cs" />
+    <Compile Include="Filters\ModelDataProviders\UserRoleListPopulatorAttribute .cs" />
     <Compile Include="Filters\ModelDataProviders\SkillListPopulatorAttribute.cs" />
     <Compile Include="Filters\ModelDataProviders\LocationSelectListPopulatorAttribute.cs" />
     <Compile Include="Filters\ModelDataProviders\NamePrefixSelectListPopulatorAttribute.cs" />

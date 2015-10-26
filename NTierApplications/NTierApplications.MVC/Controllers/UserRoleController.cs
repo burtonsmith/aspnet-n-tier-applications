@@ -16,12 +16,12 @@ namespace NTierApplications.MVC.Controllers
 {
     public class UserRoleController : Controller
     {
-	    private readonly IUserRoleService _roleService;
+	    //private readonly IUserRoleService _roleService;
 
-	    public UserRoleController(IUserRoleService roleService)
-	    {
-		    _roleService = roleService;
-	    }
+	    //public UserRoleController(IUserRoleService roleService)
+	    //{
+		   // _roleService = roleService;
+	    //}
 
 	    
 	    // GET: UserRole
